@@ -1,0 +1,8 @@
+{
+  "domain": "omnilogic",
+  "name": "Hayward Omnfilogic Custom Component",
+  "documentation": "",
+  "dependencies": [],
+  "codeowners": ["Oliver84"],
+  "requirements": []
+}
