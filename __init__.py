@@ -18,11 +18,11 @@ async def async_setup(hass, base_config):
     config_data = await api_client.get_msp_config_file()
     telemetry_data = await api_client.get_telemetry_data()
     BOWS = config_data['Backyard']['Body-of-water']
-    for i, val in enumerate(BOWS):
+    for i, BOW in enumerate(BOWS):
         _LOGGER.info('BOW')
-        _LOGGER.info(BOWS[i]['Name'])
-        bow_name = BOWS[i]['Name']
-        bow_systemId = BOWS[i]['System-Id']
+        _LOGGER.info(BOW['Name'])
+        bow_name = BOW['Name']
+        bow_systemId = BOW['System-Id']
         filterPump = json.loads(json.dumps(BOWS[i]['Filter']))
         fp_name = filterPump['Name'].replace(' ', '_')
         fp_systemId = filterPump['System-Id']
