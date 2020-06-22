@@ -17,7 +17,8 @@ async def async_setup(hass, base_config):
     api_client = OmniLogic(username, password)
     config_data = await api_client.get_msp_config_file()
     telemetry_data = await api_client.get_telemetry_data()
-    BOWS = config_data['Backyard']['Body-of-water']
+    BOWS = await api_client.get_BOWS()
+    
     for i, BOW in enumerate(BOWS):
         _LOGGER.info('BOW')
         _LOGGER.info(BOW['Name'])
