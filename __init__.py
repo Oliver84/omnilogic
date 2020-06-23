@@ -4,7 +4,7 @@ import logging
 import aiohttp
 import json
 import xml.etree.ElementTree as ET
-from .omnilogic_api import OmniLogic #imported locally while api development is being finalized
+from omnilogic.omnilogic import OmniLogic
 
 DOMAIN = 'omnilogic'
 _LOGGER = logging.getLogger(__name__)
@@ -24,11 +24,17 @@ async def async_setup(hass, base_config):
         _LOGGER.info(BOW['Name'])
         bow_name = BOW['Name']
         bow_systemId = BOW['System-Id']
+        
+        # Filter Pump
         filterPump = json.loads(json.dumps(BOWS[i]['Filter']))
         fp_name = filterPump['Name'].replace(' ', '_')
         fp_systemId = filterPump['System-Id']
         filterSpeed = telemetry_data['Backyard']['BOW%s' %(i + 1)]['Filter']['filterSpeed']
         filterState = 'on' if telemetry_data['Backyard']['BOW%s' %(i + 1)]['Filter']['filterState'] == '1' else 'off'
         hass.states.async_set('omnilogic.%s_%s' %(bow_name, fp_name), filterState, {'speed': filterSpeed})
+
+        # Water Temp
+        waterTemp = telemetry_data['Backyard']['BOW%s' %(i + 1)]['waterTemp']
+        hass.states.async_set('omnilogic.%s_water_temp' %(bow_name), waterTemp)
     await api_client.close()
     return True
