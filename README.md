@@ -7,8 +7,6 @@ An integration that calls the omnilogic_api and gets telemetry data about your p
 
 Copy this folder to your ```custom_components``` folder in your homeassistant directory.
 
-Add ```omnilogic:``` to your config file and add your username and password.
-
 # Features
 
 Features for each Body of Water:

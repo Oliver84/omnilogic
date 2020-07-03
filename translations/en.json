@@ -1,0 +1,15 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "data": {
+                    "password": "Password",
+                    "username": "Username ..NOT email address"
+                },
+                "description": "Please enter the username and password for your Omnilogic account.",
+                "title": "Connect to Hayward Omnilogic"
+            }
+        }
+    },
+    "title": "Hayward Omnilogic"
+}
