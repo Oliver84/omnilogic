@@ -51,14 +51,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         _LOGGER.info(BOW["Name"])
         bow_name = BOW["Name"]
         bow_systemId = BOW["System-Id"]
+
+        # Filter Information
         filterPump = json.loads(json.dumps(BOWS[i]["Filter"]))
         fp_name = filterPump["Name"].replace(" ", "_")
         fp_systemId = filterPump["System-Id"]
+
         filterSpeed = telemetry_data["Backyard"]["BOW%s" % (i + 1)]["Filter"][
             "filterSpeed"
         ]
-        filterMaxSpeed = BOW["Filter"]["Max-Pump-Speed"]
-        filterMinSpeed = BOW["Filter"]["Min-Pump-Speed"]
+        filterMaxSpeed = filterPump["Max-Pump-Speed"]
+        filterMinSpeed = filterPump["Min-Pump-Speed"]
         filterState = (
             "on"
             if telemetry_data["Backyard"]["BOW%s" % (i + 1)]["Filter"]["filterState"]
@@ -66,12 +69,33 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
             else "off"
         )
         hass.states.async_set(
-            f"omnilogic.{bow_name}_{fp_name}", filterState, {"speed": filterSpeed, "max_speed": filterMaxSpeed, "min_speed": filterMinSpeed}
+            f"omnilogic.{bow_name}_{fp_name}", filterState, {"speed": filterSpeed, "max_speed": filterMaxSpeed, "min_speed": filterMinSpeed, "filter_id": fp_systemId}
         )
 
         # Water Temp
         waterTemp = telemetry_data['Backyard']['BOW%s' %(i + 1)]['waterTemp']
         hass.states.async_set('omnilogic.%s_water_temp' %(bow_name), waterTemp)
+
+        # Heater
+        bow_heater = json.loads(json.dumps(BOWS[i]["Heater"]))
+        heater_name = bow_heater["Operation"]["Heater-Equipment"]["Name"].replace(" ", "_")
+        heater_systemId = bow_heater["System-Id"]
+        heater_virtualID = bow_heater["Operation"]["Heater-Equipment"]["System-Id"]
+
+        heater_setPoint = bow_heater["Current-Set-Point"]
+        heater_maxTemp = bow_heater["Max-Settable-Water-Temp"]
+        heater_minTemp = bow_heater["Min-Settable-Water-Temp"]
+
+        heater_state = (
+            "on"
+            if bow_heater["Enabled"] == "yes"
+            else "off"
+        )
+
+        hass.states.async_set(
+            f"omnilogic.{bow_name}_{heater_name}", heater_state, {"setpoint": heater_setPoint, "max_temp": heater_maxTemp, "min_temp": heater_minTemp, "heater_id": heater_systemId, "virtual_id": heater_virtualID}
+        )
+
     await api_client.close()
 
     return True
