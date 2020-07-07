@@ -8,8 +8,10 @@ from omnilogic.omnilogic import OmniLogic
 import voluptuous as vol
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
+from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, ATTR_TEMPERATURE, TEMP_CELCIUS, TEMP_FARENHEIT
 from homeassistant.core import HomeAssistant
+
+from .water_heater import OmniLogicHeater
 
 from .const import DOMAIN
 
@@ -69,7 +71,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
             else "off"
         )
         hass.states.async_set(
-            f"omnilogic.{bow_name}_{fp_name}", filterState, {"speed": filterSpeed, "unit_of_measurement":"%", "icon":"mdi:water-pump", "max_speed": filterMaxSpeed, "min_speed": filterMinSpeed, "filter_id": fp_systemId}
+            f"omnilogic.{bow_name}_{fp_name}", filterState, {"speed": filterSpeed, "icon":"mdi:water-pump", "max_speed": filterMaxSpeed, "min_speed": filterMinSpeed, "filter_id": fp_systemId}
         )
 
         # Water Temp
@@ -81,11 +83,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         hass.states.async_set('omnilogic.%s_air_temp' %(bow_name), airTemp, {"unit_of_measurement": "°F", "icon":"mdi:thermometer"})
 
         # Heater
+
         bow_heater = json.loads(json.dumps(BOWS[i]["Heater"]))
         heater_name = bow_heater["Operation"]["Heater-Equipment"]["Name"].replace(" ", "_")
         heater_systemId = bow_heater["System-Id"]
-        heater_virtualID = bow_heater["Operation"]["Heater-Equipment"]["System-Id"]
-
+        
         heater_setPoint = bow_heater["Current-Set-Point"]
         heater_maxTemp = bow_heater["Max-Settable-Water-Temp"]
         heater_minTemp = bow_heater["Min-Settable-Water-Temp"]
@@ -96,9 +98,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
             else "off"
         )
 
-        hass.states.async_set(
-            f"omnilogic.{bow_name}_{heater_name}", heater_state, {"setpoint": heater_setPoint, "unit_of_measurement": "°F", "icon": "mdi:radiator","max_temp": heater_maxTemp, "min_temp": heater_minTemp, "heater_id": heater_systemId, "virtual_id": heater_virtualID}
-        )
+        #omni_heater = OmniLogicHeater(heater_name, heater_minTemp, heater_maxTemp, heater_setPoint, TEMP_FARENHEIT, heater_state, bow_systemId, heater_systemId)
+
+        #hass.states.async_set(
+        #    f"omnilogic.{bow_name}_{heater_name}", heater_state, {"setpoint": heater_setPoint, "icon": "mdi:radiator","max_temp": heater_maxTemp, "min_temp": heater_minTemp, "heater_id": heater_systemId, "virtual_id": heater_virtualID}
+        #)
 
     await api_client.close()
 
