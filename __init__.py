@@ -69,12 +69,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
             else "off"
         )
         hass.states.async_set(
-            f"omnilogic.{bow_name}_{fp_name}", filterState, {"speed": filterSpeed, "max_speed": filterMaxSpeed, "min_speed": filterMinSpeed, "filter_id": fp_systemId}
+            f"omnilogic.{bow_name}_{fp_name}", filterState, {"speed": filterSpeed, "unit_of_measurement":"%", "icon":"mdi:water-pump", "max_speed": filterMaxSpeed, "min_speed": filterMinSpeed, "filter_id": fp_systemId}
         )
 
         # Water Temp
         waterTemp = telemetry_data['Backyard']['BOW%s' %(i + 1)]['waterTemp']
-        hass.states.async_set('omnilogic.%s_water_temp' %(bow_name), waterTemp)
+        hass.states.async_set('omnilogic.%s_water_temp' %(bow_name), waterTemp, {"unit_of_measurement":"°F", "icon":"mdi:thermometer"})
+
+        # Air Temp
+        airTemp = telemetry_data['Backyard']['airTemp']
+        hass.states.async_set('omnilogic.%s_air_temp' %(bow_name), airTemp, {"unit_of_measurement": "°F", "icon":"mdi:thermometer"})
 
         # Heater
         bow_heater = json.loads(json.dumps(BOWS[i]["Heater"]))
@@ -93,7 +97,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         )
 
         hass.states.async_set(
-            f"omnilogic.{bow_name}_{heater_name}", heater_state, {"setpoint": heater_setPoint, "max_temp": heater_maxTemp, "min_temp": heater_minTemp, "heater_id": heater_systemId, "virtual_id": heater_virtualID}
+            f"omnilogic.{bow_name}_{heater_name}", heater_state, {"setpoint": heater_setPoint, "unit_of_measurement": "°F", "icon": "mdi:radiator","max_temp": heater_maxTemp, "min_temp": heater_minTemp, "heater_id": heater_systemId, "virtual_id": heater_virtualID}
         )
 
     await api_client.close()
