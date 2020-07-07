@@ -7,7 +7,7 @@ from omnilogic.omnilogic import OmniLogic
 import voluptuous as vol
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, ATTR_TEMPERATURE, TEMP_CELCIUS, TEMP_FARENHEIT
+from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, ATTR_TEMPERATURE, TEMP_CELSIUS, TEMP_FAHRENHEIT
 from homeassistant.core import HomeAssistant
 from homeassistant.components.water_heater import (
     WaterHeaterEntity, 
