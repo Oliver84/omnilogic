@@ -44,7 +44,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     config_data = await api_client.get_msp_config_file()
     telemetry_data = await api_client.get_telemetry_data()
     BOWS = await api_client.get_BOWS()
-    
+
     for i, BOW in enumerate(BOWS):
         
         _LOGGER.info("BOW")
@@ -57,6 +57,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         filterSpeed = telemetry_data["Backyard"]["BOW%s" % (i + 1)]["Filter"][
             "filterSpeed"
         ]
+        filterMaxSpeed = BOW["Filter"]["Max-Pump-Speed"]
+        filterMinSpeed = BOW["Filter"]["Min-Pump-Speed"]
         filterState = (
             "on"
             if telemetry_data["Backyard"]["BOW%s" % (i + 1)]["Filter"]["filterState"]
@@ -64,7 +66,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
             else "off"
         )
         hass.states.async_set(
-            f"omnilogic.{bow_name}_{fp_name}", filterState, {"speed": filterSpeed}
+            f"omnilogic.{bow_name}_{fp_name}", filterState, {"speed": filterSpeed, "max_speed": filterMaxSpeed, "min_speed": filterMinSpeed}
         )
 
         # Water Temp
